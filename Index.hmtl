@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Adaptive Wi-Fi bandwidth allocation using rational functions, weighted fairness, and demand-aware redistribution.">
+<title>Adaptive Wi-Fi Bandwidth Allocation | Mathematics Project</title>
+
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --dark: #0f172a;
+  --sidebar: #111827;
+  --background: #f1f5f9;
+  --card: #ffffff;
+  --text: #334155;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --green: #16a34a;
+  --red: #dc2626;
+  --purple: #7c3aed;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Arial, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.65;
+}
+
+header {
+  background: linear-gradient(120deg, #0f172a, #1e40af);
+  color: white;
+  padding: 65px 25px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: clamp(28px, 5vw, 46px);
+  margin: 0 0 12px;
+}
+
+header p {
+  font-size: 18px;
+  color: #dbeafe;
+  max-width: 800px;
+  margin: auto;
+}
+
+.badge {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 7px 15px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 25px;
+  font-size: 13px;
+}
+
+nav {
+  background: var(--sidebar);
+  padding: 14px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: #e2e8f0;
+  text-decoration: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+}
+
+nav a:hover {
+  background: #334155;
+}
+
+main {
+  max-width: 1150px;
+  margin: auto;
+  padding: 25px;
+}
+
+section {
+  margin-bottom: 55px;
+  scroll-margin-top: 100px;
+}
+
+h2 {
+  color: var(--dark);
+  font-size: 29px;
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: 12px;
+}
+
+h3 {
+  color: #1e40af;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 25px;
+  margin: 20px 0;
+  box-shadow: 0 4px 18px rgba(15,23,42,0.06);
+  border: 1px solid var(--border);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat strong {
+  display: block;
+  color: var(--primary);
+  font-size: 29px;
+}
+
+.stat span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.formula {
+  background: #eff6ff;
+  border-left: 5px solid var(--primary);
+  padding: 18px;
+  border-radius: 8px;
+  margin: 15px 0;
+  font-family: monospace;
+  font-size: 17px;
+  overflow-x: auto;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+input {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  font-size: 15px;
+  background: white;
+}
+
+input:focus {
+  outline: 2px solid #93c5fd;
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 7px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 5px 5px 5px 0;
+}
+
+button:hover {
+  background: var(--primary-dark);
+}
+
+button.secondary {
+  background: #475569;
+}
+
+button.danger {
+  background: var(--red);
+}
+
+button.green {
+  background: var(--green);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.student-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.student-row button {
+  margin: 0;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  min-width: 520px;
+}
+
+th, td {
+  border: 1px solid var(--border);
+  padding: 12px;
+  text-align: center;
+}
+
+th {
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+
+tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.result-highlight {
+  background: #dcfce7;
+  border-left: 5px solid var(--green);
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.warning {
+  background: #fef3c7;
+  border-left: 5px solid #f59e0b;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+}
+
+.error {
+  color: #b91c1c;
+  font-weight: 600;
+  margin: 10px 0;
+}
+
+canvas {
+  width: 100%;
+  max-height: 400px;
+}
+
+.code-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.code-toolbar button {
+  margin: 0;
+}
+
+pre {
+  background: #0b1220;
+  color: #dbeafe;
+  padding: 20px;
+  border-radius: 9px;
+  overflow-x: auto;
+  max-height: 650px;
+  line-height: 1.5;
+  font-size: 13px;
+  tab-size: 4;
+}
+
+code {
+  font-family: "SFMono-Regular", Consolas, monospace;
+}
+
+a {
+  color: var(--primary);
+}
+
+footer {
+  background: var(--dark);
+  color: #cbd5e1;
+  text-align: center;
+  padding: 35px 20px;
+}
+
+footer p {
+  margin: 6px;
+}
+
+.small {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+@media (max-width: 650px) {
+  main {
+    padding: 13px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .student-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  nav {
+    justify-content: flex-start;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Adaptive Wi-Fi Bandwidth Allocation</h1>
+  <p>
+    A Mathematical Simulation Using Rational Functions,
+    Weighted Fairness, and Demand-Aware Redistribution
+  </p>
+  <span class="badge">Mathematics Portfolio Project • Interactive Simulation</span>
+</header>
+
+<nav>
+  <a href="#home">Home</a>
+  <a href="#mathematics">Mathematics</a>
+  <a href="#simulator">Simulator</a>
+  <a href="#experiment">Experiment</a>
+  <a href="#code">Source Code</a>
+  <a href="#results">Results</a>
+</nav>
+
+<main>
+
+<!-- HOME -->
+
+<section id="home">
+
+<h2>1. Project Overview</h2>
+
+<div class="card">
+
+<h3>Introduction</h3>
+
+<p>
+A Wi-Fi network has a limited amount of available bandwidth.
+When multiple students connect to the same network, the
+available capacity must be distributed among them.
+</p>
+
+<p>
+One simple approach is to divide the bandwidth equally.
+However, students may have different bandwidth demands.
+Some may need only a small amount, while others require more.
+</p>
+
+<p>
+This project investigates how mathematical models can
+allocate bandwidth according to individual demand and
+priority weights while respecting the total network capacity.
+</p>
+
+<h3>Research Question</h3>
+
+<p>
+How can rational functions and proportional allocation
+be used to simulate the distribution of limited Wi-Fi
+bandwidth among students with changing demands?
+</p>
+
+<h3>Project Objectives</h3>
+
+<ul>
+  <li>Model equal bandwidth sharing using rational functions.</li>
+  <li>Derive a weighted proportional allocation formula.</li>
+  <li>Implement demand-aware redistribution.</li>
+  <li>Simulate changing network conditions.</li>
+  <li>Compare adaptive allocation with rigid equal limits.</li>
+  <li>Visualize bandwidth utilization mathematically.</li>
+</ul>
+
+</div>
+
+<div class="grid">
+
+<div class="card stat">
+  <strong>30</strong>
+  <span>Maximum simulated students</span>
+</div>
+
+<div class="card stat">
+  <strong>100 Mbps</strong>
+  <span>Default network capacity</span>
+</div>
+
+<div class="card stat">
+  <strong>60</strong>
+  <span>Dynamic simulation time steps</span>
+</div>
+
+<div class="card stat">
+  <strong>2</strong>
+  <span>Allocation methods compared</span>
+</div>
+
+</div>
+
+<div class="warning">
+<strong>Scope:</strong>
+This project is a mathematical simulation.
+It does not control a physical router or measure
+actual internet throughput.
+</div>
+
+</section>
+
+<!-- MATHEMATICS -->
+
+<section id="mathematics">
+
+<h2>2. Mathematical Model</h2>
+
+<div class="card">
+
+<h3>2.1 Equal Bandwidth Allocation</h3>
+
+<p>
+Suppose a network has a total bandwidth capacity
+of B<sub>T</sub> Mbps and n connected students.
+</p>
+
+<p>
+If bandwidth is divided equally, each student
+receives the following share:
+</p>
+
+<div class="formula">
+B(n) = B<sub>T</sub> / n
+</div>
+
+<p>
+For a network with 100 Mbps:
+</p>
+
+<div class="formula">
+B(n) = 100 / n
+</div>
+
+<p>
+This is a rational function because the variable
+appears in the denominator.
+</p>
+
+<p>
+As the number of students increases, the equal
+bandwidth share decreases.
+</p>
+
+<div class="table-wrap">
+<table>
+<tr>
+  <th>Connected Students</th>
+  <th>Equal Share</th>
+</tr>
+<tr><td>1</td><td>100 Mbps</td></tr>
+<tr><td>2</td><td>50 Mbps</td></tr>
+<tr><td>5</td><td>20 Mbps</td></tr>
+<tr><td>10</td><td>10 Mbps</td></tr>
+<tr><td>20</td><td>5 Mbps</td></tr>
+<tr><td>30</td><td>3.33 Mbps</td></tr>
+</table>
+</div>
+
+<p>
+The mathematical graph of B(n) = 100/n
+has a vertical asymptote at n = 0
+and a horizontal asymptote at B = 0.
+</p>
+
+<p>
+In the actual simulation, n is restricted
+to positive whole numbers, so n = 0 is excluded.
+</p>
+
+<h3>2.2 Weighted Allocation</h3>
+
+<p>
+Students may have different priority weights.
+A student with a larger weight receives a
+larger proportional share before demand limits
+are considered.
+</p>
+
+<div class="formula">
+B<sub>i</sub> = (w<sub>i</sub> / Σw<sub>j</sub>) × B<sub>T</sub>
+</div>
+
+<p>Where:</p>
+
+<ul>
+  <li>B<sub>i</sub>: allocated bandwidth for student i</li>
+  <li>w<sub>i</sub>: priority weight of student i</li>
+  <li>Σw<sub>j</sub>: sum of all active priority weights</li>
+  <li>B<sub>T</sub>: total available bandwidth</li>
+</ul>
+
+<h3>2.3 Derivation</h3>
+
+<p>
+Assume that each student's bandwidth allocation
+is proportional to their priority weight:
+</p>
+
+<div class="formula">
+B<sub>i</sub> = k × w<sub>i</sub>
+</div>
+
+<p>
+If the entire capacity is distributed:
+</p>
+
+<div class="formula">
+ΣB<sub>i</sub> = B<sub>T</sub>
+</div>
+
+<p>Substituting the proportional relationship:</p>
+
+<div class="formula">
+k × Σw<sub>i</sub> = B<sub>T</sub>
+</div>
+
+<p>Therefore:</p>
+
+<div class="formula">
+k = B<sub>T</sub> / Σw<sub>i</sub>
+</div>
+
+<p>Substituting back:</p>
+
+<div class="formula">
+B<sub>i</sub> = (w<sub>i</sub> / Σw<sub>j</sub>) × B<sub>T</sub>
+</div>
+
+<h3>2.4 Demand-Aware Redistribution</h3>
+
+<p>
+Pure proportional allocation does not account
+for students who need less bandwidth than
+their calculated share.
+</p>
+
+<p>
+The adaptive algorithm therefore:
+</p>
+
+<ol>
+  <li>Calculates weighted shares among active students.</li>
+  <li>Identifies students whose demands can be fully satisfied.</li>
+  <li>Allocates only the bandwidth those students need.</li>
+  <li>Removes satisfied students from the active allocation set.</li>
+  <li>Redistributes the remaining capacity among unsatisfied students.</li>
+  <li>Repeats until no further redistribution is possible.</li>
+</ol>
+
+<h3>2.5 Mathematical Constraints</h3>
+
+<div class="formula">
+0 ≤ B<sub>i</sub> ≤ d<sub>i</sub>
+</div>
+
+<div class="formula">
+ΣB<sub>i</sub> ≤ B<sub>T</sub>
+</div>
+
+<p>
+Here d<sub>i</sub> represents student i's
+requested bandwidth.
+</p>
+
+<p>
+These constraints ensure that no student
+receives negative bandwidth, no student
+receives more than requested, and total
+allocation does not exceed capacity.
+</p>
+
+</div>
+
+</section>
+
+<!-- INTERACTIVE SIMULATOR -->
+
+<section id="simulator">
+
+<h2>3. Interactive Bandwidth Simulator</h2>
+
+<div class="card">
+
+<p>
+Modify the total network capacity, student demands,
+and priority weights to see how the allocation changes.
+</p>
+
+<div class="controls">
+
+<div>
+<label for="capacity">Total Bandwidth (Mbps)</label>
+<input type="number" id="capacity" value="100" min="0">
+</div>
+
+</div>
+
+<h3>Connected Students</h3>
+
+<div id="studentInputs"></div>
+
+<button onclick="addStudent()">+ Add Student</button>
+
+<button class="secondary" onclick="resetStudents()">
+Reset Example
+</button>
+
+<button class="green" onclick="calculateAllocation()">
+Calculate Allocation
+</button>
+
+<div id="inputError" class="error" role="alert"></div>
+
+<div id="allocationResults"></div>
+
+<h3>Bandwidth Allocation Comparison</h3>
+
+<canvas id="allocationChart"></canvas>
+
+<p class="small">
+The fixed equal method imposes non-borrowable equal limits.
+The adaptive method redistributes unused capacity.
+</p>
+
+</div>
+
+</section>
+
+<!-- DYNAMIC EXPERIMENT -->
+
+<section id="experiment">
+
+<h2>4. Dynamic Network Experiment</h2>
+
+<div class="card">
+
+<h3>Experiment Description</h3>
+
+<p>
+This experiment models a school Wi-Fi network
+with up to 30 students.
+</p>
+
+<p>
+At each time step, students may connect or disconnect.
+Connected students receive new simulated bandwidth demands.
+The program then recalculates allocations using both methods.
+</p>
+
+<div class="controls">
+
+<div>
+<label for="experimentCapacity">
+Network Capacity (Mbps)
+</label>
+<input
+  type="number"
+  id="experimentCapacity"
+  value="100"
+  min="0"
+>
+</div>
+
+<div>
+<label for="maxStudents">
+Maximum Students
+</label>
+<input
+  type="number"
+  id="maxStudents"
+  value="30"
+  min="1"
+  max="200"
+>
+</div>
+
+<div>
+<label for="timeSteps">
+Simulation Time Steps
+</label>
+<input
+  type="number"
+  id="timeSteps"
+  value="60"
+  min="1"
+  max="500"
+>
+</div>
+
+</div>
+
+<button class="green" onclick="runExperiment()">
+Run Dynamic Simulation
+</button>
+
+<div id="experimentError" class="error" role="alert"></div>
+
+<div id="experimentSummary"></div>
+
+<h3>Graph 1: Connected Students</h3>
+
+<canvas id="studentsChart"></canvas>
+
+<h3>Graph 2: Total Bandwidth Demand</h3>
+
+<canvas id="demandChart"></canvas>
+
+<h3>Graph 3: Bandwidth Utilization</h3>
+
+<canvas id="utilizationChart"></canvas>
+
+<p class="small">
+The browser experiment uses seeded pseudo-random values
+for reproducibility. Its exact results may differ from
+the Python simulation because the random generators differ.
+</p>
+
+</div>
+
+</section>
+
+<!-- SOURCE CODE -->
+
+<section id="code">
+
+<h2>5. Python Source Code</h2>
+
+<div class="card">
+
+<p>
+The original Python implementation is maintained
+in this GitHub repository.
+</p>
+
+<p>
+Select a file below to view its complete source code.
+The website loads the actual file from the repository,
+so future GitHub updates are reflected here.
+</p>
+
+<div class="code-toolbar">
+
+<button onclick="loadSource('allocator.py')">
+allocator.py
+</button>
+
+<button onclick="loadSource('demo.py')">
+demo.py
+</button>
+
+<button onclick="loadSource('simulation.py')">
+simulation.py
+</button>
+
+<button onclick="loadSource('test_allocator.py')">
+test_allocator.py
+</button>
+
+<button onclick="loadSource('requirements.txt')">
+requirements.txt
+</button>
+
+<button onclick="loadSource('README.md')">
+README.md
+</button>
+
+</div>
+
+<h3 id="sourceTitle">allocator.py</h3>
+
+<p id="sourceStatus" class="small" aria-live="polite">
+Loading source code...
+</p>
+
+<pre><code id="sourceDisplay"></code></pre>
+
+<button onclick="copySource()">
+Copy Code
+</button>
+
+<a
+  id="githubFileLink"
+  href="#"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+View File on GitHub
+</a>
+
+<div class="warning">
+<strong>Important:</strong>
+The source viewer requires your Python files to be
+uploaded to the same GitHub repository as index.html.
+It works after the website is published through
+GitHub Pages.
+</div>
+
+</div>
+
+</section>
+
+<!-- RESULTS -->
+
+<section id="results">
+
+<h2>6. Results and Conclusions</h2>
+
+<div class="card">
+
+<h3>Basic Experimental Example</h3>
+
+<p>
+Consider a network with a total capacity of 100 Mbps
+and three students with different bandwidth demands.
+</p>
+
+<div class="table-wrap">
+
+<table>
+
+<tr>
+<th>Student</th>
+<th>Demand</th>
+<th>Fixed Equal</th>
+<th>Adaptive</th>
+</tr>
+
+<tr>
+<td>1</td>
+<td>10 Mbps</td>
+<td>10 Mbps</td>
+<td>10 Mbps</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>30 Mbps</td>
+<td>30 Mbps</td>
+<td>30 Mbps</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>80 Mbps</td>
+<td>33.33 Mbps</td>
+<td>60 Mbps</td>
+</tr>
+
+</table>
+
+</div>
+
+<h3>Utilization Comparison</h3>
+
+<div class="grid">
+
+<div class="card stat">
+<strong>73.33%</strong>
+<span>Fixed equal utilization</span>
+</div>
+
+<div class="card stat">
+<strong>100%</strong>
+<span>Adaptive utilization</span>
+</div>
+
+<div class="card stat">
+<strong>26.67</strong>
+<span>Percentage-point improvement</span>
+</div>
+
+</div>
+
+<h3>Interpretation</h3>
+
+<p>
+Under rigid equal limits, each student is initially
+limited to approximately 33.33 Mbps.
+</p>
+
+<p>
+Students 1 and 2 cannot use their entire shares
+because their demands are lower.
+Student 3 cannot borrow the unused capacity.
+</p>
+
+<p>
+The adaptive algorithm instead allocates 10 Mbps
+and 30 Mbps to the first two students, then
+redistributes the remaining 60 Mbps to Student 3.
+</p>
+
+<p>
+In this example, the adaptive method increases
+allocated bandwidth utilization from approximately
+73.33% to 100%.
+</p>
+
+<h3>Conclusion</h3>
+
+<p>
+This project demonstrates that rational functions
+and proportional relationships can form the
+foundation of a mathematical bandwidth allocation model.
+</p>
+
+<p>
+The demand-aware extension allows unused capacity
+to be redistributed while respecting total capacity
+and individual demand constraints.
+</p>
+
+<p>
+The simulation illustrates how mathematical modeling,
+algorithms, and programming can be combined to study
+resource allocation.
+</p>
+
+<h3>Limitations</h3>
+
+<ul>
+<li>The network demands are simulated rather than measured.</li>
+<li>The model assumes a fixed total bandwidth capacity.</li>
+<li>The model does not account for latency, packet loss, or wireless interference.</li>
+<li>The simulation does not control real network hardware.</li>
+<li>The comparison uses rigid equal limits, not every existing network scheduling method.</li>
+<li>Higher modeled allocation utilization does not automatically prove higher real-world network performance.</li>
+</ul>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+
+<p><strong>Adaptive Wi-Fi Bandwidth Allocation System</strong></p>
+
+<p>Mathematics Portfolio Project</p>
+
+<p>Rational Functions • Mathematical Modeling • Python Simulation</p>
+
+</footer>
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+<script>
+
+/* ============================================
+   CORE MATHEMATICAL ALGORITHMS
+============================================ */
+
+function allocate(capacity, demands, weights) {
+
+  if (!Number.isFinite(capacity) || capacity < 0) {
+    throw new Error("Capacity must be nonnegative.");
+  }
+
+  if (demands.length !== weights.length) {
+    throw new Error("Demands and weights must match.");
+  }
+
+  if (demands.some(d => !Number.isFinite(d) || d < 0)) {
+    throw new Error("Demands must be nonnegative.");
+  }
+
+  if (weights.some(w => !Number.isFinite(w) || w <= 0)) {
+    throw new Error("Weights must be positive.");
+  }
+
+  const allocations = demands.map(() => 0);
+
+  let active = demands
+    .map((d, i) => d > 0 ? i : -1)
+    .filter(i => i >= 0);
+
+  let remaining = capacity;
+
+  while (active.length > 0 && remaining > 1e-9) {
+
+    const totalWeight = active.reduce(
+      (sum, i) => sum + weights[i],
+      0
+    );
+
+    const shares = {};
+
+    active.forEach(i => {
+      shares[i] = remaining * weights[i] / totalWeight;
+    });
+
+    const satisfied = active.filter(
+      i => demands[i] - allocations[i] <= shares[i]
+    );
+
+    if (satisfied.length === 0) {
+
+      active.forEach(i => {
+        allocations[i] += shares[i];
+      });
+
+      break;
+    }
+
+    satisfied.forEach(i => {
+
+      const needed = demands[i] - allocations[i];
+
+      allocations[i] += needed;
+      remaining -= needed;
+
+    });
+
+    active = active.filter(
+      i => !satisfied.includes(i)
+    );
+  }
+
+  return allocations;
+}
+
+
+function fixedEqual(capacity, demands) {
+
+  if (!demands.length) {
+    return [];
+  }
+
+  const share = capacity / demands.length;
+
+  return demands.map(
+    demand => Math.min(demand, share)
+  );
+}
+
+
+/* ============================================
+   INTERACTIVE STUDENT INPUTS
+============================================ */
+
+let nextStudentId = 1;
+
+function addStudent(demand = 20, weight = 1) {
+
+  const id = nextStudentId++;
+
+  const row = document.createElement("div");
+
+  row.className = "student-row";
+
+  row.innerHTML = `
+    <div>
+      <label>Student ${id}</label>
+      <span class="small">Bandwidth demand</span>
+    </div>
+
+    <div>
+      <label>Demand (Mbps)</label>
+      <input
+        type="number"
+        class="student-demand"
+        value="${demand}"
+        min="0"
+        step="any"
+      >
+    </div>
+
+    <div>
+      <label>Priority Weight</label>
+      <input
+        type="number"
+        class="student-weight"
+        value="${weight}"
+        min="0.01"
+        step="any"
+      >
+    </div>
+
+    <button
+      class="danger"
+      onclick="this.parentElement.remove()"
+      aria-label="Remove student"
+    >
+      Remove
+    </button>
+  `;
+
+  document.getElementById("studentInputs").appendChild(row);
+}
+
+
+function resetStudents() {
+
+  document.getElementById("studentInputs").innerHTML = "";
+
+  nextStudentId = 1;
+
+  document.getElementById("capacity").value = 100;
+
+  addStudent(10, 1);
+  addStudent(30, 1);
+  addStudent(80, 1);
+
+  calculateAllocation();
+}
+
+
+/* ============================================
+   CHART HELPERS
+============================================ */
+
+const charts = {};
+
+function createChart(id, configuration) {
+
+  if (typeof Chart === "undefined") {
+    return;
+  }
+
+  if (charts[id]) {
+    charts[id].destroy();
+  }
+
+  const canvas = document.getElementById(id);
+
+  charts[id] = new Chart(
+    canvas.getContext("2d"),
+    configuration
+  );
+}
+
+
+/* ============================================
+   INTERACTIVE ALLOCATION CALCULATOR
+============================================ */
+
+function calculateAllocation() {
+
+  const error = document.getElementById("inputError");
+
+  error.textContent = "";
+
+  try {
+
+    const capacity = Number(
+      document.getElementById("capacity").value
+    );
+
+    const rows = Array.from(
+      document.querySelectorAll(".student-row")
+    );
+
+    if (!rows.length) {
+      throw new Error("Add at least one student.");
+    }
+
+    const demands = rows.map(row =>
+      Number(row.querySelector(".student-demand").value)
+    );
+
+    const weights = rows.map(row =>
+      Number(row.querySelector(".student-weight").value)
+    );
+
+    if (
+      !Number.isFinite(capacity) ||
+      capacity < 0 ||
+      demands.some(d => !Number.isFinite(d) || d < 0) ||
+      weights.some(w => !Number.isFinite(w) || w <= 0)
+    ) {
+      throw new Error(
+        "Enter nonnegative capacity and demands, and positive weights."
+      );
+    }
+
+    const adaptive = allocate(
+      capacity,
+      demands,
+      weights
+    );
+
+    const equal = fixedEqual(
+      capacity,
+      demands
+    );
+
+    const totalAdaptive = adaptive.reduce(
+      (a, b) => a + b, 0
+    );
+
+    const totalEqual = equal.reduce(
+      (a, b) => a + b, 0
+    );
+
+    const adaptiveUtil = capacity > 0
+      ? totalAdaptive / capacity * 100
+      : 0;
+
+    const equalUtil = capacity > 0
+      ? totalEqual / capacity * 100
+      : 0;
+
+    let html = `
+      <div class="table-wrap">
+      <table>
+      <tr>
+        <th>Student</th>
+        <th>Demand</th>
+        <th>Weight</th>
+        <th>Fixed Equal</th>
+        <th>Adaptive</th>
+      </tr>
+    `;
+
+    demands.forEach((demand, i) => {
+
+      html += `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${demand.toFixed(2)}</td>
+          <td>${weights[i].toFixed(2)}</td>
+          <td>${equal[i].toFixed(2)}</td>
+          <td>${adaptive[i].toFixed(2)}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+      </table>
+      </div>
+
+      <div class="grid">
+
+        <div class="card stat">
+          <strong>${totalAdaptive.toFixed(2)}</strong>
+          <span>Adaptive allocated Mbps</span>
+        </div>
+
+        <div class="card stat">
+          <strong>${adaptiveUtil.toFixed(2)}%</strong>
+          <span>Adaptive utilization</span>
+        </div>
+
+        <div class="card stat">
+          <strong>${equalUtil.toFixed(2)}%</strong>
+          <span>Fixed equal utilization</span>
+        </div>
+
+      </div>
+
+      <div class="result-highlight">
+        <strong>Utilization improvement:</strong>
+        ${(adaptiveUtil - equalUtil).toFixed(2)}
+        percentage points.
+      </div>
+    `;
+
+    document.getElementById("allocationResults").innerHTML = html;
+
+    createChart("allocationChart", {
+
+      type: "bar",
+
+      data: {
+
+        labels: demands.map(
+          (_, i) => `Student ${i + 1}`
+        ),
+
+        datasets: [
+
+          {
+            label: "Demand",
+            data: demands,
+            backgroundColor: "#94a3b8"
+          },
+
+          {
+            label: "Fixed Equal",
+            data: equal,
+            backgroundColor: "#f59e0b"
+          },
+
+          {
+            label: "Adaptive",
+            data: adaptive,
+            backgroundColor: "#2563eb"
+          }
+
+        ]
+      },
+
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: "top"
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Bandwidth (Mbps)"
+            }
+          }
+        }
+      }
+
+    });
+
+  } catch (err) {
+
+    error.textContent = err.message;
+
+  }
+}
+
+
+/* ============================================
+   REPRODUCIBLE RANDOM GENERATOR
+============================================ */
+
+function seededRandom(seed) {
+
+  let state = seed >>> 0;
+
+  return function() {
+
+    state = (1664525 * state + 1013904223) >>> 0;
+
+    return state / 4294967296;
+  };
+}
+
+
+/* ============================================
+   DYNAMIC EXPERIMENT
+============================================ */
+
+function runExperiment() {
+
+  const error = document.getElementById("experimentError");
+
+  error.textContent = "";
+
+  try {
+
+    const capacity = Number(
+      document.getElementById("experimentCapacity").value
+    );
+
+    const maxStudents = Number(
+      document.getElementById("maxStudents").value
+    );
+
+    const steps = Number(
+      document.getElementById("timeSteps").value
+    );
+
+    if (
+      !Number.isFinite(capacity) ||
+      capacity <= 0
+    ) {
+      throw new Error(
+        "Experiment capacity must be greater than zero."
+      );
+    }
+
+    if (
+      !Number.isInteger(maxStudents) ||
+      maxStudents < 1 ||
+      maxStudents > 200
+    ) {
+      throw new Error(
+        "Maximum students must be between 1 and 200."
+      );
+    }
+
+    if (
+      !Number.isInteger(steps) ||
+      steps < 1 ||
+      steps > 500
+    ) {
+      throw new Error(
+        "Time steps must be between 1 and 500."
+      );
+    }
+
+    const random = seededRandom(42);
+
+    const students = new Map();
+
+    const initialCount = Math.min(
+      15,
+      maxStudents
+    );
+
+    for (let i = 0; i < initialCount; i++) {
+
+      students.set(
+        i,
+        1 + random() * 9
+      );
+    }
+
+    const times = [];
+
+    const studentCounts = [];
+
+    const totalDemands = [];
+
+    const adaptiveUtils = [];
+
+    const equalUtils = [];
+
+    for (let t = 0; t < steps; t++) {
+
+      // Random disconnections
+
+      for (const student of Array.from(students.keys())) {
+
+        if (random() < 0.05) {
+          students.delete(student);
+        }
+      }
+
+      // Random connections
+
+      for (let student = 0; student < maxStudents; student++) {
+
+        if (!students.has(student)) {
+
+          if (random() < 0.08) {
+
+            students.set(
+              student,
+              1 + random() * 9
+            );
+          }
+        }
+      }
+
+      // Update demand
+
+      for (const student of students.keys()) {
+
+        students.set(
+          student,
+          1 + random() * 14
+        );
+      }
+
+      const demands = Array.from(students.values());
+
+      const weights = demands.map(() => 1);
+
+      const adaptive = allocate(
+        capacity,
+        demands,
+        weights
+      );
+
+      const equal = fixedEqual(
+        capacity,
+        demands
+      );
+
+      const adaptiveTotal = adaptive.reduce(
+        (a, b) => a + b, 0
+      );
+
+      const equalTotal = equal.reduce(
+        (a, b) => a + b, 0
+      );
+
+      times.push(t + 1);
+
+      studentCounts.push(students.size);
+
+      totalDemands.push(
+        demands.reduce((a, b) => a + b, 0)
+      );
+
+      adaptiveUtils.push(
+        adaptiveTotal / capacity * 100
+      );
+
+      equalUtils.push(
+        equalTotal / capacity * 100
+      );
+    }
+
+    const averageAdaptive = adaptiveUtils.reduce(
+      (a, b) => a + b, 0
+    ) / steps;
+
+    const averageEqual = equalUtils.reduce(
+      (a, b) => a + b, 0
+    ) / steps;
+
+    document.getElementById("experimentSummary").innerHTML = `
+      <div class="grid">
+
+        <div class="card stat">
+          <strong>${averageAdaptive.toFixed(2)}%</strong>
+          <span>Average adaptive utilization</span>
+        </div>
+
+        <div class="card stat">
+          <strong>${averageEqual.toFixed(2)}%</strong>
+          <span>Average fixed equal utilization</span>
+        </div>
+
+        <div class="card stat">
+          <strong>${(averageAdaptive - averageEqual).toFixed(2)}</strong>
+          <span>Percentage-point difference</span>
+        </div>
+
+      </div>
+    `;
+
+    // Graph 1
+
+    createChart("studentsChart", {
+
+      type: "line",
+
+      data: {
+        labels: times,
+        datasets: [{
+          label: "Connected Students",
+          data: studentCounts,
+          borderColor: "#2563eb",
+          backgroundColor: "#2563eb",
+          tension: 0.2,
+          pointRadius: 1
+        }]
+      },
+
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Number of Students"
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: "Time Step"
+            }
+          }
+        }
+      }
+
+    });
+
+    // Graph 2
+
+    createChart("demandChart", {
+
+      type: "line",
+
+      data: {
+
+        labels: times,
+
+        datasets: [
+
+          {
+            label: "Total Demand",
+            data: totalDemands,
+            borderColor: "#7c3aed",
+            tension: 0.2,
+            pointRadius: 1
+          },
+
+          {
+            label: "Network Capacity",
+            data: times.map(() => capacity),
+            borderColor: "#dc2626",
+            borderDash: [8, 5],
+            pointRadius: 0
+          }
+
+        ]
+      },
+
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Bandwidth (Mbps)"
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: "Time Step"
+            }
+          }
+        }
+      }
+
+    });
+
+    // Graph 3
+
+    createChart("utilizationChart", {
+
+      type: "line",
+
+      data: {
+
+        labels: times,
+
+        datasets: [
+
+          {
+            label: "Adaptive Allocation",
+            data: adaptiveUtils,
+            borderColor: "#16a34a",
+            tension: 0.2,
+            pointRadius: 1
+          },
+
+          {
+            label: "Fixed Equal Allocation",
+            data: equalUtils,
+            borderColor: "#f59e0b",
+            tension: 0.2,
+            pointRadius: 1
+          }
+
+        ]
+      },
+
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            title: {
+              display: true,
+              text: "Utilization (%)"
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: "Time Step"
+            }
+          }
+        }
+      }
+
+    });
+
+  } catch (err) {
+
+    error.textContent = err.message;
+
+  }
+}
+
+
+/* ============================================
+   SOURCE CODE VIEWER
+============================================ */
+
+let currentSource = "";
+
+const allowedFiles = [
+  "allocator.py",
+  "demo.py",
+  "simulation.py",
+  "test_allocator.py",
+  "requirements.txt",
+  "README.md"
+];
+
+async function loadSource(filename) {
+
+  if (!allowedFiles.includes(filename)) {
+    return;
+  }
+
+  const display = document.getElementById("sourceDisplay");
+
+  const status = document.getElementById("sourceStatus");
+
+  const title = document.getElementById("sourceTitle");
+
+  const githubLink = document.getElementById("githubFileLink");
+
+  title.textContent = filename;
+
+  display.textContent = "Loading...";
+
+  status.textContent = "Fetching source file from GitHub Pages...";
+
+  currentSource = "";
+
+  // Resolve relative to the website's directory.
+  // This works for GitHub Pages project sites.
+
+  const fileUrl = new URL(
+    filename,
+    window.location.href
+  );
+
+  githubLink.href = fileUrl.href;
+
+  githubLink.textContent = "Open source file";
+
+  try {
+
+    const response = await fetch(
+      fileUrl.href,
+      { cache: "no-store" }
+    );
+
+    if (!response.ok) {
+
+      throw new Error(
+        `File not found (HTTP ${response.status}).`
+      );
+    }
+
+    const text = await response.text();
+
+    currentSource = text;
+
+    display.textContent = text;
+
+    status.textContent =
+      `Loaded ${filename} successfully.`;
+
+  } catch (err) {
+
+    display.textContent =
+      "Unable to load the source file.";
+
+    status.textContent =
+      "Make sure the file exists in the same " +
+      "repository folder as index.html. " +
+      err.message;
+  }
+}
+
+
+async function copySource() {
+
+  if (!currentSource) {
+    alert("Load a source file first.");
+    return;
+  }
+
+  try {
+
+    await navigator.clipboard.writeText(currentSource);
+
+    alert("Source code copied successfully!");
+
+  } catch (err) {
+
+    alert(
+      "Clipboard access was blocked. " +
+      "You can select and copy the code manually."
+    );
+  }
+}
+
+
+/* ============================================
+   INITIALIZE WEBSITE
+============================================ */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  resetStudents();
+
+  runExperiment();
+
+  loadSource("allocator.py");
+
+});
+
+</script>
+
+</body>
+</html>
